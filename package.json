@@ -1,23 +1,96 @@
 {
+  
+  "type": "module",
+  
   "name": "myapp",
+  
   "version": "1.0.0",
+  
   "main": "node_modules/expo/AppEntry.js",
+  
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+  
+    
+  "start": "expo start",
+  
+    
+  "android": "expo start --android",
+  
+    
+  "ios": "expo start --ios",
+  
+    
+  "web": "expo start --web",
+  
+    
+  "dev": "nodemon server.js"
+  
   },
+  
   "dependencies": {
-    "@react-navigation/native": "^6.1.17",
-    "@react-navigation/stack": "^6.3.29",
-    "expo": "~50.0.14",
-    "expo-status-bar": "~1.11.1",
-    "react": "18.2.0",
-    "react-native": "0.73.6"
+  
+    
+  "@react-navigation/native": "^6.1.17",
+  
+    
+  "@react-navigation/stack": "^6.3.29",
+  
+    
+  "@types/react": "~18.2.45",
+  
+    
+  "body-parser": "^1.20.2",
+  
+    
+  "cron": "^3.1.7",
+  
+    
+  "expo": "~50.0.14",
+  
+    
+  "expo-constants": "^16.0.1",
+  
+    
+  "expo-device": "^6.0.2",
+  
+    
+  "expo-notifications": "~0.27.7",
+  
+    
+  "expo-server-sdk": "^3.10.0",
+  
+    
+  "expo-status-bar": "~1.11.1",
+  
+    
+  "express": "^4.19.2",
+  
+    
+  "firebase": "^10.12.0",
+  
+    
+  "react": "18.2.0",
+  
+    
+  "react-native": "0.73.6",
+  
+    
+  "typescript": "^5.3.0"
+  
   },
+  
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+  
+    
+  "@babel/core": "^7.20.0",
+  
+    
+  "@types/react-native": "^0.73.0",
+  
+    
+  "nodemon": "^3.1.0"
+  
   },
+  
   "private": true
 }
