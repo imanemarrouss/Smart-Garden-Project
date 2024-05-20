@@ -55,7 +55,7 @@ const LightHumidityGraphScreen = () => {
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: "#08130D",
     backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    color: (opacity = 1) => `rgba(10, 91, 242, ${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.5,
     useShadowColorFromDataset: false,
@@ -146,7 +146,6 @@ const LightHumidityGraphScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Sensor Data</Text>
-
       <View style={styles.progressContainer}>
         <Text style={styles.graphTitle}>Current Light Intensity</Text>
         <ProgressChart

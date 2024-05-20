@@ -1,3 +1,7 @@
+
+import { database } from '../config/firebaseConfig';
+import { ref, push, set } from 'firebase/database';
+
 const BASE_URL = 'http://192.168.1.30';
 
 export const toggleLED = async () => {
@@ -16,12 +20,18 @@ export const toggleLED = async () => {
 // };
 
 
-
 export const fetchLightSensorData = async () => {
   try {
-    const response = await fetch('http://192.168.1.30/lightSensorData');
+    const response = await fetch(`${BASE_URL}/lightSensorData`);
     const data = await response.text();
     console.log('Fetched Light Sensor Data:', data);
+    
+    // Save data to Firebase Realtime Database
+    await push(ref(database, 'lightSensorData'), {
+      value: data,
+      timestamp: new Date().toISOString(),
+    });
+
     return [data]; // Assuming the data is a single value, return it in an array
   } catch (error) {
     console.error('Error fetching light sensor data:', error);
@@ -29,10 +39,40 @@ export const fetchLightSensorData = async () => {
   }
 };
 
+// export const fetchLightSensorData = async () => {
+//   try {
+//     const response = await fetch('http://192.168.1.30/lightSensorData');
+//     const data = await response.text();
+//     console.log('Fetched Light Sensor Data:', data);
+//     return [data]; // Assuming the data is a single value, return it in an array
+//   } catch (error) {
+//     console.error('Error fetching light sensor data:', error);
+//     return [0]; // Return [0] in case of error to avoid breaking the app
+//   }
+// };
+
+
+// export const fetchLightSensorData = async () => {
+//   try {
+//     const response = await fetch('http://192.168.1.30/lightSensorData');
+//     const data = await response.text();
+//     console.log('Fetched Light Sensor Data:', data);
+    
+//     // Save the retrieved data to Firebase
+//     await db.ref('sensor/light').set(data);
+
+//     return [data]; // Assuming the data is a single value, return it in an array
+//   } catch (error) {
+//     console.error('Error fetching light sensor data:', error);
+//     return [0]; // Return [0] in case of error to avoid breaking the app
+//   }
+// };
+
+
 export const fetchHumidityTemperatureData = async () => {
   try {
     const response = await fetch(`${BASE_URL}/temperatureHumidityData`);
-    const data = await response.json();
+    const data = await response.text();
     console.log('Fetched Humidity and Temperature Data:', data);
     return data;
   } catch (error) {
@@ -86,5 +126,27 @@ export const fetchTemperatureSensorData = async () => {
   } catch (error) {
     console.error('Error fetching temperature sensor data:', error);
     return [0, 0, 0, 0, 0, 0, 0];
+  }
+};
+
+export const fetchAllLightSensorData = async () => {
+  try {
+    const lightSensorDataRef = ref(database, 'lightSensorData');
+    
+    onValue(lightSensorDataRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const formattedData = Object.keys(data).map(key => ({
+          id: key,
+          ...data[key],
+        }));
+        console.log('All Light Sensor Data:', formattedData);
+        // You can use this formattedData to display in your UI
+      } else {
+        console.log('No data available');
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching light sensor data:', error);
   }
 };
