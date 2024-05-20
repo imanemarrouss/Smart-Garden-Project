@@ -1,6 +1,7 @@
 
 import { database } from '../config/firebaseConfig';
 import { ref, push, set } from 'firebase/database';
+import {  get } from 'firebase/database';
 
 const BASE_URL = 'http://192.168.1.30';
 
@@ -132,21 +133,22 @@ export const fetchTemperatureSensorData = async () => {
 export const fetchAllLightSensorData = async () => {
   try {
     const lightSensorDataRef = ref(database, 'lightSensorData');
-    
-    onValue(lightSensorDataRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const formattedData = Object.keys(data).map(key => ({
-          id: key,
-          ...data[key],
-        }));
-        console.log('All Light Sensor Data:', formattedData);
-        // You can use this formattedData to display in your UI
-      } else {
-        console.log('No data available');
-      }
-    });
+    const snapshot = await get(lightSensorDataRef);
+    const data = snapshot.val();
+
+    if (data) {
+      const formattedData = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      }));
+      console.log('All Light Sensor Data:', formattedData);
+      return formattedData;
+    } else {
+      console.log('No data available');
+      return [];
+    }
   } catch (error) {
     console.error('Error fetching light sensor data:', error);
+    throw error;
   }
 };

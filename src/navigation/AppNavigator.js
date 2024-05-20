@@ -6,6 +6,7 @@ import LightControlScreen from '../screens/LightControlScreen';
 import Notification from '../components/notification';
 import LightHumidityGraphScreen from '../screens/LightHumidityGraphScreen';
 import AirTemperature from '../screens/AirTemperature';
+import SensorDataHistory from '../screens/SensorDataHistory';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -13,7 +14,8 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
       
-      <Stack.Screen name="AirTemperature" component={AirTemperature} options={{ title: 'Tableau de Bord' }} />
+      {/* <Stack.Screen name="AirTemperature" component={AirTemperature} options={{ title: 'Tableau de Bord' }} /> */}
+      <Stack.Screen name="SensorDataHistory" component={SensorDataHistory} options={{ title: 'Tableau de Bord' }} />
 
                 {/* <Stack.Screen name="LightControl" component={LightControlScreen} options={{ title: 'Tableau de Bord' }} /> */}
                 {/* <Stack.Screen name="Notification" component={Notification} /> */}
