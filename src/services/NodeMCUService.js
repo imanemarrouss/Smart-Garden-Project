@@ -135,13 +135,96 @@ export const activateIrrigation = async () => {
   }
 };
 
-export const fetchHumiditySensorData = async () => {
-  const response = await fetch(`${BASE_URL}/humiditySensorData`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch humidity sensor data');
+// export const fetchHumiditySensorData = async () => {
+//   const response = await fetch(`${BASE_URL}/humiditySensorData`);
+//   if (!response.ok) {
+//     throw new Error('Failed to fetch humidity sensor data');
+//   }
+//   return await response.text();
+// };
+
+
+export const fetchHumiditySensorDataa = async () => {
+  try {
+    const response = await fetch('http://192.168.1.30/humiditySensorData', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json(); // Parse JSON directly
+    console.log('Fetched soil Sensor Data:', data);
+    return data.humidity; // Adjust to match your sensor data structure
+  } catch (error) {
+    console.error('Error fetching soil sensor data:', error);
+    return 0; // Return 0 in case of error to avoid breaking the app
   }
-  return await response.text();
 };
+
+export const fetchAllSoilHumiditySensorDataa = async () => {
+  try {
+    const dbRef = ref(database);
+    const snapshot = await get(child(dbRef, 'soilHumiditySensorData'));
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      return Object.values(data);
+    } else {
+      console.log('No soil humidity sensor data available');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching soil humidity sensor data:', error);
+    return [];
+  }
+};
+
+export const fetchAllSoilHumiditySensorData = async () => {
+  try {
+    const soilHumiditySensorDataRef = ref(database, 'soilHumiditySensorData');
+    const snapshot = await get(soilHumiditySensorDataRef);
+    const data = snapshot.val();
+
+    if (data) {
+      const formattedData = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      }));
+      console.log('All Soil Humidity Sensor Data:', formattedData);
+      return formattedData;
+    } else {
+      console.log('No data available');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching soil humidity sensor data:', error);
+    throw error;
+  }
+};
+
+export const fetchHumiditySensorData = async () => {
+  try {
+    const response = await fetch('http://192.168.1.30/humiditySensorData', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json(); // Parse JSON directly
+    console.log('Fetched soil Sensor Data:', data);
+
+    // Save data to Firebase Realtime Database
+    await push(ref(database, 'soilHumiditySensorData'), {
+      value: data.humidity,
+      timestamp: new Date().toISOString(),
+    });
+
+    return data.humidity; // Adjust to match your sensor data structure
+  } catch (error) {
+    console.error('Error fetching soil sensor data:', error);
+    return 0; // Return 0 in case of error to avoid breaking the app
+  }
+};
+
 
 // export const fetchData = async (setPumpStatus, setSensorStatus) => {
 //   try {

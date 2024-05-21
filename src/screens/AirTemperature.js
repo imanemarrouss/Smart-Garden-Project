@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions, Text, ScrollView } from 'react-native';
 import { ProgressChart } from 'react-native-chart-kit';
 import { fetchHumidityTemperatureData ,fetchLightSensorData,fetchHumiditySensorData} from '../services/NodeMCUService';
 import { LineChart } from 'react-native-chart-kit';
-
+import SoilScreenData from './SoilScreenData';
 
 
 const AirTemperature = () => {
@@ -24,8 +24,8 @@ const AirTemperature = () => {
     labels: ["Light Intensity"],
     data: [0]
   });
-
   const [loading, setLoading] = useState(true);
+
 
 
   
@@ -42,6 +42,7 @@ const AirTemperature = () => {
         const parsedLightData = parseLightSensorData(rawLightData);
         setLightData(parsedLightData);
 
+        
         const rawSoilHumidityData = await fetchHumiditySensorData();
         const parsedSoilHumidityData = parseSoilHumidityData(rawSoilHumidityData);
         setSoilHumidityData(parsedSoilHumidityData);
@@ -130,7 +131,7 @@ const AirTemperature = () => {
           <Text>Loading...</Text>
         ) : (
           <>
-            <ProgressChart
+            {/* <ProgressChart
               data={humidityTempData}
               width={screenWidth}
               height={220}
@@ -139,17 +140,10 @@ const AirTemperature = () => {
               chartConfig={chartConfig}
               hideLegend={false}
               style={styles.chart}
-            />
-            <ProgressChart
-              data={soilHumidityData}
-              width={screenWidth}
-              height={220}
-              strokeWidth={26}
-              radius={62}
-              chartConfig={chartSoilConfig}
-              hideLegend={false}
-              style={styles.chart}
-            />
+            /> */}
+                        
+                        <Text style={styles.title}>Current Light Data</Text>
+
             <ProgressChart
               data={lightData}
               width={screenWidth}
@@ -160,7 +154,7 @@ const AirTemperature = () => {
               hideLegend={false}
               style={styles.chart}
             />
-            <Text style={styles.title}>Temperature and Humidity</Text>
+            <Text style={styles.title}>Current Air Temperature and Humidity</Text>
       <LineChart
         data={{
           labels: ['Temperature', 'Humidity'],
@@ -178,6 +172,8 @@ const AirTemperature = () => {
         bezier
         style={styles.chart}
       />
+                  <SoilScreenData />
+
           </>
         )}
       </View>
@@ -217,6 +213,14 @@ const styles = StyleSheet.create({
 });
 
 export default AirTemperature;
+
+
+
+
+
+
+
+
 
 
 
