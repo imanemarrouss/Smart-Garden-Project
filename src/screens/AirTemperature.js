@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Text, ScrollView } from 'react-native';
 import { ProgressChart } from 'react-native-chart-kit';
 import { fetchHumidityTemperatureData ,fetchLightSensorData,fetchHumiditySensorData} from '../services/NodeMCUService';
+import { LineChart } from 'react-native-chart-kit';
+
+
 
 const AirTemperature = () => {
   const screenWidth = Dimensions.get('window').width;
+  const [temperatureData, setTemperatureData] = useState({ humidity: 0, temperature_C: 0, temperature_F: 0 });
 
   const [soilHumidityData, setSoilHumidityData] = useState({
     labels: ["Soil Humidity"],
@@ -23,6 +27,10 @@ const AirTemperature = () => {
 
   const [loading, setLoading] = useState(true);
 
+
+  
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -37,6 +45,9 @@ const AirTemperature = () => {
         const rawSoilHumidityData = await fetchHumiditySensorData();
         const parsedSoilHumidityData = parseSoilHumidityData(rawSoilHumidityData);
         setSoilHumidityData(parsedSoilHumidityData);
+        
+        const data = await fetchHumidityTemperatureData();
+        setTemperatureData(data);
 
         setLoading(false);
       } catch (error) {
@@ -75,26 +86,37 @@ const AirTemperature = () => {
     const soilHumidity = parseFloat(rawData);
     return {
       labels: ["Soil Humidity"],
-      data: [soilHumidity / 100] // Assuming the soil humidity is a percentage
+      data: [soilHumidity / 1024] // Assuming the soil humidity is a percentage
     };
   };
 
   // Configuration for the ProgressChart
+  // const chartConfig = {
+  //   backgroundGradientFrom: '#ff531a',
+  //   backgroundGradientTo: '#ba5247',
+  //   color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+  //   strokeWidth: 2
+  // };
+
   const chartConfig = {
-    backgroundGradientFrom: '#ba5247',
-    backgroundGradientTo: '#59504f',
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2
-  };
-  const chartSoilConfig = {
-    backgroundGradientFrom: '#544c38',
+    backgroundGradientFrom: '#1E2923',
+    backgroundGradientFromOpacity: 0,
     backgroundGradientTo: '#08130D',
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 2,
+  };
+  
+
+
+  const chartSoilConfig = {
+    backgroundGradientFrom: '#635e5c',
+    backgroundGradientTo: '#7d6a66',
     color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     strokeWidth: 2
   };
 
-
-  const chartLightConfig = {
+ const chartLightConfig = {
     backgroundGradientFrom: '#1E2923',
     backgroundGradientTo: '#08130D',
     color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
@@ -138,6 +160,24 @@ const AirTemperature = () => {
               hideLegend={false}
               style={styles.chart}
             />
+            <Text style={styles.title}>Temperature and Humidity</Text>
+      <LineChart
+        data={{
+          labels: ['Temperature', 'Humidity'],
+          datasets: [
+            {
+              data: [temperatureData.temperature_C, temperatureData.humidity],
+              color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+              strokeWidth: 2,
+            },
+          ],
+        }}
+        width={screenWidth}
+        height={200}
+        chartConfig={chartConfig}
+        bezier
+        style={styles.chart}
+      />
           </>
         )}
       </View>
@@ -152,13 +192,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 20, // Margin at the bottom
   },
+  // container: {
+  //   justifyContent: 'center',
+  //   alignItems: 'center'
+  // },
+  // chart: {
+  //   marginVertical: 10, // Margin between charts
+  // },
   container: {
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center'
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   chart: {
-    marginVertical: 10, // Margin between charts
-  }
+    marginVertical: 8,
+    borderRadius: 16,
+  },
+
 });
 
 export default AirTemperature;
+
+
+
+
+
+
+
+
+
+ 
+
+

@@ -70,11 +70,56 @@ export const fetchLightSensorData = async () => {
 // };
 
 
-export const fetchHumidityTemperatureData = async () => {
+export const fetchHumidityTemperatureDatae= async () => {
   try {
     const response = await fetch(`${BASE_URL}/temperatureHumidityData`);
     const data = await response.text();
     console.log('Fetched Humidity and Temperature Data:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching humidity and temperature data:', error);
+    return { humidity: 0, temperature_C: 0, temperature_F: 0 };
+  }
+};
+
+export const fetchHumidityTemperatureData = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/temperatureHumidityData`);
+    const rawData = await response.text();
+    console.log('Raw response:', rawData);
+
+    // Split the raw data by '|' to separate humidity and temperature
+    const [humidityString, temperatureString] = rawData.split('|');
+
+    // Extract the numeric values from the strings
+    const humidity = parseFloat(humidityString.split(':')[1]);
+    const temperature_C = parseFloat(temperatureString.split(':')[1].split('°C')[0]);
+    const temperature_F = parseFloat(temperatureString.split('~')[1].split('°F')[0]);
+
+    const data = { humidity, temperature_C, temperature_F };
+    console.log('Fetched Humidity and Temperature Data:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching humidity and temperature data:', error);
+    return { humidity: 0, temperature_C: 0, temperature_F: 0 };
+  }
+};
+
+
+export const fetchHumidityTemperatureDataa = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/temperatureHumidityData`);
+    const data = await response.text();
+    console.log('Fetched Humidity and Temperature Data:', data);
+    
+    // Save data to Firebase Realtime Database
+    await push(ref(database, 'humidityTemperatureData'), {
+      humidity: parseFloat(data.humidity), // Assuming humidity is a number
+      temperature_C: parseFloat(data.temperature_C), // Assuming temperature_C is a number
+      temperature_F: parseFloat(data.temperature_F), // Assuming temperature_F is a number
+      timestamp: new Date().toISOString(),
+    });
+
     return data;
   } catch (error) {
     console.error('Error fetching humidity and temperature data:', error);
@@ -98,6 +143,28 @@ export const fetchHumiditySensorData = async () => {
   return await response.text();
 };
 
+// export const fetchData = async (setPumpStatus, setSensorStatus) => {
+//   try {
+//     const pumpResponse = await fetch(`${BASE_URL}/pumpState`);
+//     if (!pumpResponse.ok) {
+//       throw new Error('Failed to fetch pump state');
+//     }
+//     const pumpData = await pumpResponse.text();
+//     setPumpStatus(pumpData);
+
+//     const sensorResponse = await fetch(`${BASE_URL}/sensorStatus`);
+//     if (!sensorResponse.ok) {
+//       throw new Error('Failed to fetch sensor status');
+//     }
+//     const sensorData = await sensorResponse.text();
+//     setSensorStatus(sensorData);
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//   }
+// };
+
+
+
 export const fetchData = async (setPumpStatus, setSensorStatus) => {
   try {
     const pumpResponse = await fetch(`${BASE_URL}/pumpState`);
@@ -113,10 +180,21 @@ export const fetchData = async (setPumpStatus, setSensorStatus) => {
     }
     const sensorData = await sensorResponse.text();
     setSensorStatus(sensorData);
+
+    // Save pump and sensor data to Firebase
+    const timestamp = new Date().toISOString();
+    await push(ref(database, 'irrigationHistory'), {
+      pumpStatus: pumpData,
+      sensorStatus: sensorData,
+      timestamp: timestamp
+    });
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+
+
+
 
 // Add this function in your NodeMCUService.js or appropriate service file
 export const fetchTemperatureSensorData = async () => {
@@ -149,6 +227,30 @@ export const fetchAllLightSensorData = async () => {
     }
   } catch (error) {
     console.error('Error fetching light sensor data:', error);
+    throw error;
+  }
+};
+
+
+export const fetchAllHumidityTemperatureData = async () => {
+  try {
+    const humidityTemperatureDataRef = ref(database, 'humidityTemperatureData');
+    const snapshot = await get(humidityTemperatureDataRef);
+    const data = snapshot.val();
+
+    if (data) {
+      const formattedData = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key],
+      }));
+      console.log('All Humidity and Temperature Data:', formattedData);
+      return formattedData;
+    } else {
+      console.log('No data available');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching humidity and temperature data:', error);
     throw error;
   }
 };

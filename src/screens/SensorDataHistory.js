@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions, ScrollView } from 'react-native';
+import { View, Text, Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { fetchAllLightSensorData } from '../services/NodeMCUService';
+import { fetchAllLightSensorData, fetchAllHumidityTemperatureData } from '../services/NodeMCUService';
+
+const screenWidth = Dimensions.get('window').width;
 
 const SensorDataHistory = () => {
-  const [sensorData, setSensorData] = useState([]);
-
+  const [lightSensorData, setLightSensorData] = useState([]);
+  const [temperatureData, setTemperatureData] = useState([]);
+  const [humidityData, setHumidityData] = useState([]);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchAllLightSensorData();
-        setSensorData(data);
+        const lightData = await fetchAllLightSensorData();
+        setLightSensorData(lightData);
+
+        const humidityTemperatureData = await fetchAllHumidityTemperatureData();
+        const temperatures = humidityTemperatureData.map(item => item.temperature_C);
+        const humidities = humidityTemperatureData.map(item => item.humidity);
+        setTemperatureData(temperatures);
+        setHumidityData(humidities);
       } catch (error) {
         console.error('Error fetching sensor data:', error);
       }
@@ -19,24 +29,35 @@ const SensorDataHistory = () => {
     fetchData();
   }, []);
 
-  const formatDataForChart = (data) => {
+  const formatLightDataForChart = (data) => {
+    const validData = data.filter(item => !isNaN(parseInt(item.value, 10)));
     return {
-      labels: data.map(item => new Date(item.timestamp).toLocaleTimeString()),
+      labels: validData.map(item => new Date(item.timestamp).toLocaleTimeString()),
       datasets: [
         {
-          data: data.map(item => parseInt(item.value, 10)),
+          data: validData.map(item => parseInt(item.value, 10)),
         }
       ]
     };
   };
 
+  const chartConfig = {
+    backgroundGradientFrom: '#1E2923',
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: '#08130D',
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 2,
+  };
+
   return (
     <ScrollView>
-      <View>
-        {sensorData.length > 0 ? (
+      <View style={styles.container}>
+        <Text style={styles.title}>Light Sensor Data History</Text>
+        {lightSensorData.length > 0 ? (
           <LineChart
-            data={formatDataForChart(sensorData)}
-            width={Dimensions.get('window').width} // from react-native
+            data={formatLightDataForChart(lightSensorData)}
+            width={screenWidth} // from react-native
             height={220}
             yAxisLabel=""
             yAxisSuffix=""
@@ -58,17 +79,67 @@ const SensorDataHistory = () => {
               }
             }}
             bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 16
-            }}
+            style={styles.chart}
           />
         ) : (
           <Text>No data available</Text>
         )}
+
+        <Text style={styles.title}>Air Temperature and Humidity History</Text>
+        <LineChart
+          data={{
+            labels: temperatureData.map((_, index) => `T${index + 1}`),
+            datasets: [
+              {
+                data: temperatureData,
+                color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+                strokeWidth: 2,
+              },
+              {
+                data: humidityData,
+                color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
+                strokeWidth: 2,
+              },
+            ],
+            legend: ["Temperature (°C)", "Humidity (%)"]
+          }}
+          width={screenWidth}
+          height={220}
+          chartConfig={chartConfig}
+          bezier
+          style={styles.chart}
+        />
       </View>
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  chart: {
+    marginVertical: 8,
+    borderRadius: 16,
+  },
+  highlightedText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
+    backgroundColor: '#1E90FF',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+});
 
 export default SensorDataHistory;
