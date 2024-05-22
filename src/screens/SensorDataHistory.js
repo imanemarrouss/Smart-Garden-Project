@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { fetchAllLightSensorData, fetchAllSoilHumiditySensorData, fetchAllHumidityTemperatureData } from '../services/NodeMCUService';
+import SoilHumidityHistory from './SoilHumidityHistory';
+import LightSensorHistory from './LightSensorHistory';
+import AirTemperatureHumidityHistory from './AirTemperatureHumidityHistory';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -56,7 +59,7 @@ const SensorDataHistory = () => {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <Text style={styles.title}>Light Sensor Data History</Text>
         {lightSensorData.length > 0 ? (
           <LineChart
@@ -145,7 +148,11 @@ const SensorDataHistory = () => {
           bezier
           style={styles.chart}
         />
-      </View>
+      </View> */}
+      <LightSensorHistory/>
+      <SoilHumidityHistory/>
+      <AirTemperatureHumidityHistory/>
+
     </ScrollView>
   );
 };

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Text, ScrollView } from 'react-native';
 import { ProgressChart } from 'react-native-chart-kit';
-import { fetchHumiditySensorData } from '../services/NodeMCUService';
+import { fetchLightSensorData } from '../services/NodeMCUService';
 
-const SoilScreenData = () => {
+const LightScreen = () => {
   const screenWidth = Dimensions.get('window').width;
-  const [soilHumidityData, setSoilHumidityData] = useState({
-    labels: ["Soil Humidity"],
+  const [lightData, setLightData] = useState({
+    labels: ["Light Intensity"],
     data: [0]
   });
   const [loading, setLoading] = useState(true);
@@ -14,23 +14,32 @@ const SoilScreenData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const humidity = await fetchHumiditySensorData();
-        setSoilHumidityData({
-          labels: ["Soil Humidity"],
-          data: [humidity / 100] // Adjust to your data scaling
-        });
+        const rawLightData = await fetchLightSensorData();
+        const parsedLightData = parseLightSensorData(rawLightData);
+        setLightData(parsedLightData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
+  const parseLightSensorData = (rawData) => {
+    const lightIntensity = parseFloat(rawData);
+    return {
+      labels: ["Light Intensity"],
+      data: [lightIntensity / 1024] // Assuming the light intensity is a percentage
+    };
+  };
+
   const chartConfig = {
     backgroundGradientFrom: '#1E2923',
+    backgroundGradientFromOpacity: 0,
     backgroundGradientTo: '#08130D',
+    backgroundGradientToOpacity: 0.5,
     color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     strokeWidth: 2,
   };
@@ -42,12 +51,12 @@ const SoilScreenData = () => {
           <Text>Loading...</Text>
         ) : (
           <>
-            <Text style={styles.title}>Current Soil Humidity</Text>
+            <Text style={styles.title}>Current Light Data</Text>
             <ProgressChart
-              data={soilHumidityData}
+              data={lightData}
               width={screenWidth}
               height={220}
-              strokeWidth={26}
+              strokeWidth={16}
               radius={62}
               chartConfig={chartConfig}
               hideLegend={false}
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingBottom: 20, // Margin at the bottom
   },
   container: {
     flex: 1,
@@ -83,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SoilScreenData;
+export default LightScreen;
