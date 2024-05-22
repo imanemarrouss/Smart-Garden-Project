@@ -37,7 +37,21 @@
     "react-native-web": "~0.19.6",
     "typescript": "~5.3.3",
     "victory-native": "^40.2.0",
-    "react-native-svg": "15.2.0"
+    "react-native-svg": "15.2.0",
+    "@react-native-community/cameraroll": "^4.1.2",
+    "@react-native-community/slider": "^4.5.2",
+    
+    "expo-camera": "~15.0.9",
+    
+    "expo-file-system": "^17.0.1",
+    "expo-image-picker": "^15.0.5",
+   
+    "expo-media-library": "~16.0.3",
+    
+   
+    "tar-fs": "^3.0.6"
+    
+    
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -50,3 +64,4 @@
   },
   "private": true
 }
+

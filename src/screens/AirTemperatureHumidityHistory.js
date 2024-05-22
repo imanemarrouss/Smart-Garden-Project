@@ -27,7 +27,7 @@ const AirTemperatureHumidityHistory = () => {
     datasets: [
       {
         data: temperatureHumidityData.map(item => item.temperature_C),
-        color: (opacity = 1) => `rgba(255, 99, 71, ${opacity})`, // Line color
+        color: (opacity = 1) => `rgba(189, 72, 51, ${opacity})`, // Line color
         strokeWidth: 2, // Line width
       },
       {

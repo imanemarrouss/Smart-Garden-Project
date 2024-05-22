@@ -39,7 +39,7 @@ const TemperatureScreen = () => {
           datasets: [
             {
               data: [temperatureData.temperature_C, temperatureData.humidity],
-              color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+              color: (opacity = 1) => `rgba(3, 107, 58, ${opacity})`,
               strokeWidth: 2,
             },
           ],
