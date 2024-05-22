@@ -37,10 +37,10 @@ const renderItem = ({ item }) => (
 function AlbumEntry({ asset, navigation }) {
   return (
     <View style={styles.imageBack}>
-      <TouchableOpacity onPress={() => navigation.navigate('PlantDetails', { asset })}>
+      <TouchableOpacity onPress={() => navigation.navigate('LightControl', { asset })}>
         <Image source={{ uri: asset.uri }} style={styles.image} />
         <View style={styles.innerShadow} />
-        <Text style={styles.textOnImage}>Your Text Here</Text>
+        <Text style={styles.textOnImage}>{asset.title.split('.').slice(0, -1).join('.')}</Text>
       </TouchableOpacity>
       
     </View >
@@ -63,12 +63,11 @@ const styles = StyleSheet.create({
     height: screenWidth / numColumns - 10,
     borderRadius: 20,
   },
-
     imageBack: {
     width: screenWidth / numColumns - 15,
     height: screenWidth / numColumns - 10,
     margin: 4,
-    //backgroundColor:'rgba(0, 0, 0, 0.2)',
+   
     borderRadius:20,
     marginLeft:11,
     shadowColor: '#fffff',

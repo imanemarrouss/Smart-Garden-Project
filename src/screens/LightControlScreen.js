@@ -6,10 +6,11 @@ import { toggleLED, fetchLightSensorData ,activateIrrigation} from '../services/
 import {  fetchHumiditySensorData, } from '../services/NodeMCUService';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const LightControlScreen = () => {
+const LightControlScreen = ({route}) => {
     const [ledStatus, setLedStatus] = useState('OFF');
     const [lightSensorData, setLightSensorData] = useState('N/A');
     const [humiditySensorData, setHumiditySensorData] = useState('N/A');
+    const { asset } = route.params;
 
     useEffect(() => {
       fetchLightSensorData().then((data) => setLightSensorData(data));
@@ -37,7 +38,7 @@ const LightControlScreen = () => {
     const handleAutomaticLEDActivation = async () => {
         const currentLightValue = parseInt(lightSensorData);
         const isDark = currentLightValue < 1000; // Adjust the threshold for darkness as per your requirement
-  
+        const { asset } = route.params;
         // Check if darkness is detected or if 20 minutes have passed
         if (isDark || ledStatus === 'OFF') {
           await handleToggleLED();
@@ -57,7 +58,9 @@ const LightControlScreen = () => {
         <Icon name="arrow-back" size={24} color="#4CAF50" onPress={() => navigation.goBack()} />
         <Text style={styles.headerText}>Back to Home</Text>
       </View>
-        <Image source={require('../utils/plant.png')} style={styles.plantImage} />
+        <Image source= {{ uri: asset.uri }} style={styles.plantImage} />
+        <Text style={styles.textOnImage}>{asset.title.split('.').slice(0, -1).join('.')}</Text>
+
         <TouchableOpacity onPress={handleToggleLED} style={styles.activateButton}>
           <Text style={styles.activateButtonText}>Toggle LED ({ledStatus})</Text>
         </TouchableOpacity>
@@ -94,6 +97,7 @@ const styles = StyleSheet.create({
     width: 240,
     height: 350,
     marginBottom: 10,
+    borderRadius:20,
   },
   activateButton: {
     width: 250, // Adjust button width as needed
@@ -120,6 +124,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#F3FFD6',
   },
+  textOnImage:{
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  }
 });
 
 export default LightControlScreen;

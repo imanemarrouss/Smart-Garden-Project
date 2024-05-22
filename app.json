@@ -7,19 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./local/assets/nabtaIcon.png",
-          "color": "#ffffff",
-          "sounds": [
-            "./local/assets/simple-notification.wav",
-            "./local/assets/simple-notification.wav"
-          ]
-        }
-      ]
-    ],
-    "plugins": [
+
       [
         "expo-notifications",
         {
@@ -60,12 +48,6 @@
     }
   },
   "owner": "loubnagh"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "ae79bf2c-b7ba-4c06-944f-c8d3ea946a70"
-      }
-    },
-    "owner": "loubnagh"
+    }
   }
 
