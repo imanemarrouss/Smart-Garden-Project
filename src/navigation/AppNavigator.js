@@ -22,6 +22,7 @@ import CameraView from '../screens/CameraView';
 import AddPlants from '../screens/AddPlants';
 import { PlantDetails } from '../screens/PlantDetails';
 import { AllPlants } from '../screens/AllPlants';
+import UserProfile from '../components/Login/UserProfile';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -29,7 +30,8 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
       <Stack.Screen name="Login" component={LoginScreen} />
-<Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="UserProfile" component={UserProfile} />
+      <Stack.Screen name="Home" component={Home} />
 <Stack.Screen name="HomeScreen" component={HomeScreen} />
       {/* <Stack.Screen name="AddPlant" component={AddPlants} options={{ title: 'add Plant' }} />
 
